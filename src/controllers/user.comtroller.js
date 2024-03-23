@@ -2,6 +2,8 @@ import asyncHandler from "../middlewares/asyncHandeler.middlewares.js";
 import { User } from "../models/user.models.js";
 import AppError from "../utils/error.utils.js";
 import emailvalidatore from "email-validator";
+import cloudnary from "cloudinary";
+import fs from "fs/promises";
 
 const cookieOPtions = {
   maxAge: 24 * 60 * 60 * 1000,
@@ -39,6 +41,23 @@ export const register = asyncHandler(async (req, res, next) => {
 
   if (!user) {
     return next(new AppError("user Registation failed ,please try again", 400));
+  }
+
+  if (req.file) {
+    console.log(req.file);
+    const result = await cloudnary.v2.uploader.upload(req.file.path, {
+      folder: "lms",
+      width: 250,
+      height: 250,
+      gravity: "faces",
+      crop: "fill",
+    });
+
+    if (result) {
+      user.avatar.public_id = result.public_id;
+      user.avatar.secure_url = result.secure_url;
+    }
+    fs.rm(`uploads/${req.file.filename}`);
   }
 
   await user.save();
