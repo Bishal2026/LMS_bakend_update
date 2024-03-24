@@ -37,3 +37,13 @@ export const authorizeRoles = (...roles) =>
 
     next();
   });
+
+export const authorizeSubscriber = asyncHandler(async (req, res, next) => {
+  const subsciption = req.user.subsciption;
+  const currentUserRole = req.user.role;
+  if (currentUserRole !== "ADMIN" && subsciption.status !== "active") {
+    return next(new AppError("please Subscribe to see  this route", 403));
+  }
+
+  next();
+});

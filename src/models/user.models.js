@@ -38,7 +38,12 @@ const userSchema = new mongoose.Schema(
     },
     forgotpasswordToken: String,
     forgotpasswordExpriry: Date,
-  },
+    subscription:{
+      id:String,
+      status: String,
+    },
+  }
+  ,
   { timestamps: true }
 );
 
