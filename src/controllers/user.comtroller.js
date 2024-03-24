@@ -44,7 +44,6 @@ export const register = asyncHandler(async (req, res, next) => {
   }
 
   if (req.file) {
-    console.log(req.file);
     const result = await cloudnary.v2.uploader.upload(req.file.path, {
       folder: "lms",
       width: 250,
@@ -121,3 +120,45 @@ export const getProfile = asyncHandler(async (req, res, next) => {
     user,
   });
 });
+
+export const forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return next(new AppError("email is required", 400));
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return next(new AppError("email not exits", 400));
+  }
+
+  const resetToken = await user.generatePasswordResetToken();
+  await user.save();
+
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+  try {
+    await sendEmail(email, subject, message);
+
+    // If email sent successfully send the success response
+    res.status(200).json({
+      success: true,
+      message: `Reset password token has been sent to ${email} successfully`,
+    });
+  } catch (error) {
+    // If some error happened we need to clear the forgotPassword* fields in our DB
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordExpiry = undefined;
+
+    await user.save();
+
+    return next(
+      new AppError(
+        error.message || "Something went wrong, please try again.",
+        500
+      )
+    );
+  }
+});
+export const resetPassword = asyncHandler(async (req, res, next) => {});

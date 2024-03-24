@@ -26,3 +26,14 @@ export const isLoggedIn = asyncHandler(async (req, _res, next) => {
   // Do not forget to call the next other wise the flow of execution will not be passed further
   next();
 });
+
+export const authorizeRoles = (...roles) =>
+  asyncHandler(async (req, _res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to view this route", 403)
+      );
+    }
+
+    next();
+  });
