@@ -38,12 +38,11 @@ const userSchema = new mongoose.Schema(
     },
     forgotpasswordToken: String,
     forgotpasswordExpriry: Date,
-    subscription:{
-      id:String,
+    subscription: {
+      id: String,
       status: String,
     },
-  }
-  ,
+  },
   { timestamps: true }
 );
 
@@ -73,11 +72,13 @@ userSchema.methods = {
   },
 
   generatePasswordResetToken: async function () {
-    const resetToken = crypto.randomBytes(20).toString("hex")
+    const resetToken = crypto.randomBytes(20).toString("hex");
 
-    this.forgotpasswordToken = crypto.createHash("sha256")
-    .update(resetToken).digest("hex")
-    this.forgotpasswordExpriry = Date.now() =15*60*1000;
+    this.forgotpasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    this.forgotpasswordExpriry = Date.now() + 15 * 60 * 1000;
 
     return resetToken;
   },
