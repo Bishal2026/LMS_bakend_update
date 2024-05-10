@@ -22,7 +22,7 @@ router
   .post(
     isLoggedIn,
     authorizeRoles("ADMIN"),
-    upload.single("tumbails"),
+    upload.single("thumbnail"),
     createCourse
   );
 

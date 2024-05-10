@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL],
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
@@ -24,11 +24,15 @@ import couresRouter from "./routers/coures.routers.js";
 
 import paymentRouter from "./routers/payment.routes.js";
 
+import miscRoutes from "./routers/miscellaneous.routers.js";
+
 app.use("/api/v1/user", userRouter);
 
 app.use("/api/v1/courses", couresRouter);
 
 app.use("/api/v1/payments", paymentRouter);
+
+app.use("/api/v1", miscRoutes);
 
 app.all("*", (req, res, next) => {
   res.status(404).send("OOPS page not found");
