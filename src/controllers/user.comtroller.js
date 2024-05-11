@@ -279,7 +279,7 @@ export const changePassword = asyncHandler(async (req, res, next) => {
 export const updateUser = asyncHandler(async (req, res, next) => {
   // Destructuring the necessary data from the req object
   const { fullName } = req.body;
-  const { id } = req.user.id;
+  const { id } = req.params;
 
   const user = await User.findById(id);
 
@@ -287,7 +287,7 @@ export const updateUser = asyncHandler(async (req, res, next) => {
     return next(new AppError("Invalid user id or user does not exist"));
   }
 
-  if (req.fullName) {
+  if (fullName) {
     user.fullName = fullName;
   }
 
