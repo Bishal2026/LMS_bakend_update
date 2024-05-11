@@ -3,6 +3,7 @@ import {
   UpdateCourse,
   addLectureToCourseById,
   createCourse,
+  deleteCourseById,
   getLecturesByCouresId,
   getallCoures,
   removeLectureFromCourse,
@@ -37,6 +38,7 @@ router
 
     upload.single("lecture"),
     addLectureToCourseById
-  );
+  )
+  .delete(isLoggedIn, authorizeRoles("ADMIN"), deleteCourseById);
 
 export default router;

@@ -186,7 +186,7 @@ export const removeLectureFromCourse = asyncHandler(async (req, res, next) => {
   // Grabbing the courseId and lectureId from req.query
   const { courseId, lectureId } = req.query;
 
-  console.log(courseId);
+  // console.log(courseId);
 
   // Checking if both courseId and lectureId are present
   if (!courseId) {
@@ -237,4 +237,32 @@ export const removeLectureFromCourse = asyncHandler(async (req, res, next) => {
     success: true,
     message: "Course lecture removed successfully",
   });
+});
+
+export const deleteCourseById = asyncHandler(async (req, res, next) => {
+  // Extracting id from the request parameters
+  const { id } = req.params;
+  console.log(id);
+  try {
+    // Finding the course via the course ID
+    const course = await Course.findById(id);
+    console.log(course);
+
+    // If course not found, send an error message
+    if (!course) {
+      return next(new AppError("Course with given id does not exist.", 404));
+    }
+
+    // Remove course
+    await course.deleteOne({ _id: id });
+
+    // Send the message as response
+    res.status(200).json({
+      success: true,
+      message: "Course deleted successfully",
+    });
+  } catch (err) {
+    // Handle any errors that occur during course deletion
+    return next(new AppError("Failed to delete course.", 500));
+  }
 });
